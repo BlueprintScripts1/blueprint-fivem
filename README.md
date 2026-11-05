@@ -8,7 +8,7 @@ Uses `bp_discord`, so it works with the **builtin bot** or **your own bot** (Bot
 
 ## Requirements
 - `qb-core`, `oxmysql`, `ox_lib`
-- `bp_discord` v1.1+ (already set up if you use bp_jobs)
+- `bp_discord` v1+ (already set up if you use bp_jobs)
 
 ## Install
 1. Put `bp_status` in your resources.
