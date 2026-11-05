@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/Qbox-supported-22C55E?style=flat-square" alt="Qbox">
   <img src="https://img.shields.io/badge/ESX-supported-22C55E?style=flat-square" alt="ESX">
   <img src="https://img.shields.io/badge/price-free-3B82F6?style=flat-square" alt="Free">
-  <a href="DISCORD_INVITE"><img src="https://img.shields.io/badge/Discord-join%20Blueprint-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://discord.gg/GYb27Gvfrz"><img src="https://img.shields.io/badge/Discord-join%20Blueprint-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
 ---
