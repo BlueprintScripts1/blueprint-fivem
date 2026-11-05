@@ -90,7 +90,7 @@ SQL tables are created automatically.
 - [ ] **Discord boss menu**: hire, promote and fire from Discord (even offline), with job item removal
 
 ## 💬 Support
-Questions, bugs or suggestions? Join the **[Blueprint Discord](DISCORD_INVITE)** and open a ticket.
+Questions, bugs or suggestions? Join the **[Blueprint Discord](https://discord.gg/GYb27Gvfrz)** and open a ticket.
 
 Found a bug? Open an [issue](../../issues) with your framework, the console error, and the steps to reproduce it.
 
