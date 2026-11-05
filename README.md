@@ -1,102 +1,100 @@
-# bp_status: Live Server Status & Duty Tracking (QBCore · demo)
+<p align="center">
+  <img src="github/assets/banner.png" alt="Blueprint FiveM Scripts" width="100%">
+</p>
 
-A Discord panel that updates itself: server online/offline, players, uptime, and **who is on duty** per job. Every shift is tracked, logged and saved to SQL.
+<p align="center">
+  <b>Free, Discord-connected FiveM scripts.</b><br>
+  Set everything up in-game · One bot across multiple Discord servers · Use our bot or <b>your own</b>
+</p>
 
-Uses `bp_discord`, so it works with the **builtin bot** or **your own bot** (Bot Bridge), across **multiple Discord servers**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Standalone-supported-22C55E?style=flat-square" alt="Standalone">
+  <img src="https://img.shields.io/badge/QBCore-supported-22C55E?style=flat-square" alt="QBCore">
+  <img src="https://img.shields.io/badge/Qbox-supported-22C55E?style=flat-square" alt="Qbox">
+  <img src="https://img.shields.io/badge/ESX-supported-22C55E?style=flat-square" alt="ESX">
+  <img src="https://img.shields.io/badge/price-free-3B82F6?style=flat-square" alt="Free">
+  <a href="DISCORD_INVITE"><img src="https://img.shields.io/badge/Discord-join%20Blueprint-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
+</p>
 
-> This is a demo (v0.2). QBCore only for now. Standalone, Qbox and ESX are coming, like in bp_jobs.
+---
 
-## Requirements
-- `qb-core`, `oxmysql`, `ox_lib`
-- `bp_discord` v1+ (already set up if you use bp_jobs)
+## 📦 What's inside
 
-## Install
-1. Put `bp_status` in your resources.
-2. In `server.cfg`, after bp_discord:
+| Resource | What it does | Frameworks | Guide |
+|---|---|---|---|
+| **`bp_jobs`** | Job applications: interview peds, in-game questions, **Accept / Deny on Discord**, promotions, blacklist, offline hiring | Standalone · QBCore · Qbox · ESX | [README](bp_jobs/README.md) |
+| **`bp_status`** *(demo)* | Live **server status panel** on Discord + **duty tracking** with shifts, logs and hours | QBCore (more coming) | [README](bp_status/README.md) |
+| **`bp_discord`** | The Discord connection every Blueprint script uses. Runs its **own bot**, or connects to **your bot** | – | [README](bp_discord/README.md) |
+| **`bot-bridge`** | Add-on for your own **discord.py** or **discord.js** bot (custom mode). *Not* a FiveM resource | – | [README](bot-bridge/README.md) |
+
+## ✨ Highlights
+
+**📝 Applications (`bp_jobs`)**
+- An NPC ped for each job's desk, placed **in-game** with `/jobcenter`. Each ped posts to its own Discord channel.
+- Every application shows the character name, CitizenID, FiveM name, **Discord**, **Steam**, phone, current job, and all the answers.
+- **Questions are built in-game** per job: text, long text, numbers, or pick-from-a-list. You can start from templates (General, Police, EMS, Mechanic...).
+- **Accept / Deny** buttons on Discord, with a reason form on Deny. Accepting works even when the player is **offline**.
+- **Promotion requests** for people already in the job, plus a **job blacklist** (e.g. police can't apply elsewhere) and cooldowns.
+- **Decision roles per job, set in-game**: the EMS staff decide in the EMS Discord, the police staff in the police Discord.
+- Bosses manage their own job; admins manage everything. Everything is saved to SQL.
+
+**🟢 Duty & Status (`bp_status`)**
+- A **live panel** that edits itself: online/offline, players, uptime, and who's on duty per department. It has **Refresh** and **Connect** buttons.
+- Every shift is tracked **per character** (switching characters never mixes hours), logged, and saved to SQL.
+- **Department channels in-game** (`/dutysettings`): each department gets its own logs and its own panel, in its own Discord.
+- Works with **any duty script** (MDT, clock-in ped, `/duty`...), because it reads the framework's on-duty state.
+- `exports.bp_status:CountOnDuty('police')` for your heists and robberies.
+
+**🤖 Use our bot or yours (`bp_discord`)**
+- **Builtin**: the bot runs **inside your FiveM server**. No VPS, no extra hosting.
+- **Custom**: add a small cog (discord.py) or module (discord.js) to **your existing bot**. FiveM connects to it over one port, secured with a shared secret, and your bot token never leaves your bot.
+- **One bot, many Discords**: main city, police, EMS... point each job or panel at any channel.
+
+## 🚀 Quick start
+
 ```cfg
+# server.cfg
+set bp_discord_token "YOUR_BOT_TOKEN"     # builtin mode (or see bot-bridge for your own bot)
+
+ensure oxmysql
+ensure ox_lib
+ensure qb-core          # or qbx_core / es_extended / nothing (standalone)
+ensure ox_target        # or qb-target, or textui
 ensure bp_discord
-ensure bp_status
+ensure bp_jobs
+ensure bp_status        # QBCore only for now
 ```
-3. In `config.lua`:
-   - Put a channel ID in `Config.Panels`.
-   - Optional: `Config.ConnectUrl` (your `https://cfx.re/join/...` link) adds a **Connect** button.
-4. Restart. The bot posts the panel and keeps **editing that same message**. It doesn't spam new ones.
 
-Tip: put the panel in a read-only channel and pin it.
+1. Download the latest release and drop `bp_discord`, `bp_jobs` and `bp_status` into `resources`.
+2. Create the bot (2 minutes): see [bp_discord/README.md](bp_discord/README.md).
+3. Start the server, join, and type **`/jobcenter`** and **`/dutysettings`**.
 
-## The panel
-```
-🟢 Blueprint RP
-Status: Online · Players: 23/64 · Uptime: 3h 12m
-──────────────
-On duty
-🚑 EMS · 2
-> Ana Doe (Paramedic), Mike Ross (Doctor)
-🚓 Police · 4
-> John Doe (Sergeant), ...
-──────────────
-Updated 12 seconds ago
-[🔄 Refresh] [🎮 Connect]
-```
-- It refreshes every `Config.UpdateSeconds` (60), and a few seconds after someone goes on or off duty.
-- **Refresh** updates it right away (with a 15s cooldown, so it can't be spammed).
-- When the server shuts down (txAdmin restart/stop, or bp_status stopped), the panel turns **🔴 Offline**.
-- If someone deletes the panel message, a new one is posted automatically.
+SQL tables are created automatically.
 
-**Multiple panels / multiple Discords:** every entry in `Config.Panels` is its own message, for example:
-- one panel with all jobs in the main city Discord
-- one with only `police` in the police Discord
-- one with only `ambulance` in the EMS Discord
+## 📋 Requirements
 
-Set `showNames = false` to show only the counts.
-
-## Departments (set in-game)
-Each department can use its **own Discord**. With **/dutysettings**, a department sets:
-| Setting | What |
+| Needed | For |
 |---|---|
-| **Logs channel** | Its own on/off duty logs (e.g. `#duty-logs` in the police Discord) |
-| **Panel channel** | A live panel showing **only that department** |
-| **Show names** | Panel shows who is on duty, or only the count |
-| **Send test message** | Checks the bot can post in both channels |
+| [oxmysql](https://github.com/overextended/oxmysql) | all |
+| [ox_lib](https://github.com/overextended/ox_lib) | all |
+| [ox_target](https://github.com/overextended/ox_target) / qb-target (optional) | interview peds (or use textui) |
+| FXServer artifacts with Node 22 (2025+) | `bp_discord` |
+| QBCore · Qbox · ESX · or none | `bp_jobs` auto-detects. `bp_status` needs QBCore for now |
 
-Who can use it:
-- **admins:** QBCore `god`/`admin`, or the ace `bp_status.admin`. They can edit every department.
-- **bosses:** with `Config.DeptAccess = 'boss'`, each department's bosses can edit their own.
-- Set `Config.DeptAccess = 'admin'` for admins only.
+## 🗺️ Roadmap
+- [x] Applications with Discord Accept / Deny
+- [x] Live status panel + duty tracking
+- [x] Use your own bot (discord.py / discord.js)
+- [ ] `bp_status`: Standalone, Qbox and ESX support
+- [ ] Weekly duty leaderboards and a boss view of employee hours
+- [ ] **Discord boss menu**: hire, promote and fire from Discord (even offline), with job item removal
 
-Notes:
-- This works **on top of** `Config.Panels` and the `logs` in `Config.Jobs`. Config is for the main city Discord; `/dutysettings` is for each department's own Discord.
-- Two departments can point at the **same** panel channel: they're merged into one panel (e.g. a shared "Emergency Services" Discord).
-- Moving a panel to another channel turns the old message into "This panel moved to #new-channel".
-- Saved in SQL (`bp_status_departments`).
+## 💬 Support
+Questions, bugs or suggestions? Join the **[Blueprint Discord](DISCORD_INVITE)** and open a ticket.
 
-## Duty tracking
-- Tracks the jobs in `Config.Jobs`, using QBCore's own `onduty`. It works with any duty script (MDTs, clock-in peds, `/duty`...): bp_status listens to QBCore's duty events and also double-checks every 5 seconds.
-- Logs `🟢 John Doe went on duty · 🚓 Police · Sergeant` and `🔴 John Doe went off duty · shift 2h 14m` to:
-  - the job's own `logs` channel
-  - and/or `Config.LogsChannel` (all jobs)
-- A shift ends when the player goes off duty, changes job, logs out, **switches character**, disconnects, or the server shuts down.
-- **Multiple characters:** shifts belong to the **character**, not the player. If someone logs out to character select (or switches with any multicharacter script) and picks a second character, the first character's shift ends, and the second one starts its own. Hours never mix, and `/dutytime` always shows the current character's time.
-- Logs go out in order, one at a time, so on/off messages never arrive mixed up.
-- If the server crashes, open shifts are closed at the player's last minute online when it starts again, so nobody gets 10 fake hours.
+Found a bug? Open an [issue](../../issues) with your framework, the console error, and the steps to reproduce it.
 
-## In-game
-| Command | What |
-|---|---|
-| `/dutytime` | Your character's duty time and shifts per job for the last 7 days |
-| `/dutysettings` | Department Discord channels (admins / bosses) |
+## 📄 License
+Free to use on your server. See [LICENSE](LICENSE).
 
-## Exports (server)
-```lua
-exports.bp_status:GetOnDuty('police')    -- { { source, citizenid, name, job, grade, since }, ... }  (nil = all jobs)
-exports.bp_status:CountOnDuty('ambulance') -- 3
-```
-Handy for other scripts, e.g. "no robberies with fewer than 4 cops on duty".
-
-## SQL
-Created automatically:
-- `bp_duty_shifts`: one row per shift, with citizenid (per character), name, job, grade, start, end, seconds, and the end reason (`off_duty`, `logout`, `char_change`, `job_change`, `disconnected`, `shutdown`, `restart`).
-- `bp_status_departments`: each department's logs channel, panel channel and show-names setting.
-
-## Coming next
-Weekly hours leaderboards on Discord, a boss view of employee hours, and Standalone / Qbox / ESX support.
+<p align="center"><sub>Made with 💙 by <b>Blueprint</b></sub></p>
